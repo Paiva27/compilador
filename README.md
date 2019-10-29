@@ -14,31 +14,21 @@ Compilador básico que contém :
 
 
 
-    void sabre(int a){ 
-            if (a  b ){  //Erro de sintaxe 1
-                a = a + 5;
-            }else{
-                a =  & ;   //Erro de sintaxe 2
-            }
-            for(int a b ; a  b; i ){ //Erro de sintaxe 3,4,5
-                 a = a b; //Erro de sintaxe 6
-            }
-        }
         
         float b(int c){
             a = c;
-            while(a -){ //Erro de sintaxe 7
-                int a b; //Erro de sintaxe 8
+            while(a -){ //Erro de sintaxe 1
+                int a b; //Erro de sintaxe 2
             }
         }
         
         int main(){
-            int b a; //Erro de sintaxe 9
+            int b == a; //Erro de sintaxe 3
         }
 
 
-####Lidando com erros:
-###### Ao lidar com erros, procurou-se sempre ir para a próxima posição "segura" disponível, como por exemplo no ***Erro de sintaxe 1***  o próximo token válido seria ***")"*** que fecha a interação com o if. Ou então no ***Erro de sintaxe 6***  que o próximo token "seguro" seria o ponto e vírgula, assim podendo continuar o código sem mais problemas.
+Lidando com erros:
+###### Ao lidar com erros, procurou-se sempre ir para a próxima posição "segura" disponível, como por exemplo no ***Erro de sintaxe 1***  o próximo token válido seria ***")"*** que fecha a interação com o if. Ou então no ***Erro de sintaxe 2***  que o próximo token "seguro" seria o ponto e vírgula, assim podendo continuar o código sem mais problemas.
 
-####Melhorias e implementações futuras:
+Melhorias e implementações futuras:
 ###### O foco principal é dar possibilidades maiores para operadores lógicos e aritméticos com mais recursos como os operadores ou, and e not. Ou mesmo com a utilização de parênteses para definir uma ordem para a operação.
