@@ -3,47 +3,51 @@
 
 
 enum categoria{
-
-    tk_rel_op = 256,
-    tk_id = 257,
-    tk_const_int = 258,
-    tk_const_float =259,
-    tk_const_lit = 260,
-    tk_kw_int = 261,
-    tk_kw_float = 262,
-    tk_kw_char = 263,
-    tk_kw_if = 264,
-    tk_kw_else = 265,
-    tk_kw_for = 266,
-    tk_kw_while = 267,
-    tk_kw_break = 268,
-    tk_kw_not = 269,
-    tk_kw_and = 270,
-    tk_kw_or = 271,
-    tk_kw_main = 272,
-    tk_kw_func = 273,
-    tk_kw_return = 274,
-    tk_kw_strcmp = 275,
-    tk_kw_strcop = 276,
-    tk_kw_input = 277,
-    tk_kw_output = 278,
-    tk_kw_include = 279,
-    tk_op_add = 280,
-    tk_op_sub = 281,
-    tk_op_mul = 282,
-    tk_op_div = 283,
-    tk_op_atrib = 284,
-    tk_open_par = 285,
-    tk_close_par = 286,
-    tk_open_bra = 287,
-    tk_close_bra = 288,
-    tk_close_key = 289,
-    tk_open_key = 290,
-    tk_semicolon = 291,
-    tk_comma = 292,
-    erro  = 293
+    tk_inicio = 0,
+    tk_id = 1,
+    tk_rel_op = 2,
+    tk_const_int = 3,
+    tk_const_float =4,
+    tk_const_lit = 5,
+    tk_kw_int = 6,
+    tk_kw_float = 7,
+    tk_kw_char = 8,
+    tk_kw_if = 9,
+    tk_kw_else = 10,
+    tk_kw_for = 11,
+    tk_kw_while = 12,
+    tk_kw_break = 13,
+    tk_kw_not = 14,
+    tk_kw_and = 15,
+    tk_kw_or = 16,
+    tk_kw_main = 17,
+    tk_kw_func = 18,
+    tk_kw_return = 19,
+    tk_kw_strcmp = 20,
+    tk_kw_strcop = 21,
+    tk_kw_input = 22,
+    tk_kw_output = 23,
+    tk_kw_include = 24,
+    tk_kw_void = 25,
+    tk_op_add = 26,
+    tk_op_sub = 27,
+    tk_op_mul = 28,
+    tk_op_div = 29,
+    tk_op_atrib = 30,
+    tk_open_par = 31,
+    tk_close_par = 32,
+    tk_open_bra = 33,
+    tk_close_bra = 34,
+    tk_close_key = 35,
+    tk_open_key = 36,
+    tk_semicolon = 37,
+    tk_comma = 38,
+    erro  = 39,
+    fim = 40
 };
 typedef enum categoria Categoria;
+
+typedef struct token Token;
 
 struct token{
     char *valor;
@@ -52,7 +56,6 @@ struct token{
     int coluna;
 };
 
-typedef struct token Token;
 
 Categoria achar_categoria(char *buffer);
 

@@ -1,15 +1,13 @@
 #include "lexico.h"
+#include "sintatico.h"
 #include<stdlib.h>
+#include<stdio.h>
 
 
 int main(int argc, char *argv[]){
-
     iniciar(argc, argv);
-    Token *token = proximo_token();
-    while(token != NULL){
-        imprimeToken(token);
-        token = proximo_token();
-    }
+    criaListaTokens();
+    analisaLista();
     encerrar();
     return 0;
 }

@@ -10,6 +10,7 @@ FILE *arquivo;
 size_t numero_bytes=100;
 int bytes_lidos=0, linha1=0, coluna1=0, i=0, j=0, primeiro=0, comentario = 0, coluna2 = 0;
 char *linha_do_arquivo;
+Token lista_tokens;
 
 // Funcao utilizada para imprimir token
 
@@ -210,9 +211,10 @@ Token* operador_relacional(){
             }
             break;
     }
-
     return token;
 }
+
+
 
 Categoria achar_categoria(char *buffer){
     if(!strcmp(buffer, "int"))
@@ -251,8 +253,10 @@ Categoria achar_categoria(char *buffer){
         return tk_kw_input;
     if((!strcmp(buffer, "output")))
         return tk_kw_output;
-    if((!strcmp(buffer, "#include")))
+    if((!strcmp(buffer, "include")))
         return tk_kw_include;
+    if((!strcmp(buffer, "void")))
+        return tk_kw_void;
     return erro;
 }
 
