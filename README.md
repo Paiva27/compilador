@@ -4,7 +4,7 @@
 ###### Matricula: 172050018
 ----
 ## Analisador Sintático : 
-####Entrega e apresentação do trabalho dia: 29/ Outubro/ 2019
+Entrega e apresentação do trabalho dia: 29/ Outubro/ 2019
 
 ## Funcionalidades:
 Compilador básico que contém :
@@ -27,8 +27,8 @@ Compilador básico que contém :
         }
 
 
-Lidando com erros:
-###### Ao lidar com erros, procurou-se sempre ir para a próxima posição "segura" disponível, como por exemplo no ***Erro de sintaxe 1***  o próximo token válido seria ***")"*** que fecha a interação com o if. Ou então no ***Erro de sintaxe 2***  que o próximo token "seguro" seria o ponto e vírgula, assim podendo continuar o código sem mais problemas.
+## Lidando com erros:
+Ao lidar com erros, procurou-se sempre ir para a próxima posição "segura" disponível, como por exemplo no ***Erro de sintaxe 1***  o próximo token válido seria ***")"*** que fecha a interação com o if. Ou então no ***Erro de sintaxe 2***  que o próximo token "seguro" seria o ponto e vírgula, assim podendo continuar o código sem mais problemas.
 
-Melhorias e implementações futuras:
-###### O foco principal é dar possibilidades maiores para operadores lógicos e aritméticos com mais recursos como os operadores ou, and e not. Ou mesmo com a utilização de parênteses para definir uma ordem para a operação.
+## Melhorias e implementações futuras:
+ O foco principal é dar possibilidades maiores para operadores lógicos e aritméticos com mais recursos como os operadores ou, and e not. Ou mesmo com a utilização de parênteses para definir uma ordem para a operação.
