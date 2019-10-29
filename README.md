@@ -2,17 +2,17 @@
 
 Aluno: Rafael Paiva de Moraes
 Matricula: 172050018
--------------
+----
 # Analisador Sintático : 
 Entrega e apresentação do trabalho dia: 29/ Outubro/ 2019
--------------
+----
 # Funcionalidades:
 Compilador básico que contém :
 - Os tipos : ***int,float e char***
 - As Estruturas de controle de fluxo  : ***if, else,for e while***
 - Lida com erros básicos de sintaxe como:
 
-`void sabre(int a){ 
+` void sabre(int a){ 
         if (a  b ){  //Erro de sintaxe 1
             a = a + 5;
         }else{
