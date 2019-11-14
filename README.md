@@ -1,4 +1,4 @@
-# Compilador - Analisador Léxico e Sintático
+# Compilador - Analisador Léxico, Sintático e Semântico
 
 ###### Aluno: Rafael Paiva de Moraes
 ###### Matricula: 172050018
