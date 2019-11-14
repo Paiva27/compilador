@@ -1,24 +1,11 @@
-
-void sabre(int a){
-    int a; 
-    if (a  b ){ 
-        a = a + 5;
-    }else{
-        a = ;
-    }
-    for(int a b ; a  b; i ){
-         a = a b;
-    }
-}
-
-float b(int c){
-    a = c;
-    while(a -){
-        int a b;
-    }
+int sePa(int b,char a){
+    char c,a;
 }
 
 int main(){
-    int b a;
-    return 0;
+    float a;
+    int b;
+    char c;
+    b = b * a + 5 / b;
+    c = c + c;
 }

@@ -43,7 +43,8 @@ enum categoria{
     tk_semicolon = 37,
     tk_comma = 38,
     erro  = 39,
-    fim = 40
+    fim = 40,
+    indet = 41
 };
 typedef enum categoria Categoria;
 

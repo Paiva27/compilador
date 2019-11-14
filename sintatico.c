@@ -4,17 +4,12 @@
 #include<ctype.h>
 #include "lexico.h"
 #include "sintatico.h"
+#include "semantico.h"
 
 int quantidadeErros = 0;
 
 void criaListaTokens(){
     Token *token = proximo_token();
-   /* //Cria a cabeça da lista
-    lista[0].categoria = 0;
-    lista[0].valor = "inicio";
-    lista[0].linha = 0;
-    lista[0].coluna = 0;*/
-
     int i = 1;
     while(token != NULL){
         if(token != NULL){
@@ -62,12 +57,13 @@ return i;
 }
 
 //Analisa a declaração de parametros em uma função
-int analisaParametros(int i){
+int analisaParametros(int i,char *funcao){
     int flag = 0;    
     //Enquanto tiver dentro do parenteses procura declaraçoes de paramentros
     while(flag == 0){
         //Analisa caso o token seja int,float,char ou void
         if((lista[i+1].categoria==6)||(lista[i+1].categoria==7)||(lista[i+1].categoria==8)||(lista[i+1].categoria==25)){
+            int tipo =  lista[i+1].categoria;
             //Verifica caso tenha um id
             if(lista[i+2].categoria== 1){
                 //Caso tenha mais um parametro verifica se tem virgula
@@ -79,9 +75,11 @@ int analisaParametros(int i){
                             quantidadeErros++;
                         }
                     //Pula a ultima decalaração e vai para a proxima
+                    preencheTabela(lista[i+2].valor,tipo,funcao,lista[i+2].linha,lista[i+2].coluna);
                     i += 3;
                 }else if(lista[i+3].categoria == 32){
                     //Acabou a declaração
+                    preencheTabela(lista[i+2].valor,tipo,funcao,lista[i+2].linha,lista[i+2].coluna);
                     flag = 1;
                 }else{
                     //Erro - Caractere não esperado
@@ -137,17 +135,21 @@ return i;
 }
 
 
-int analisaDeclaracaoVariaveis (int i){
+int analisaDeclaracaoVariaveis (int i,char *funcao){
     int flag = 0;
+    int categoria = lista[i].categoria;
        while(flag == 0){
             //Verifica se tem tipo ID após o tipo
             if(lista[i+1].categoria== 1){
                 //Caso tenha mais um parametro verifica se tem virgula
                 if(lista[i+2].categoria == 38){
                     //Pula a ultima decalaração e vai para a proxima
+                    preencheTabela(lista[i+1].valor,categoria,funcao,lista[i+1].linha,lista[i+1].coluna);
                     i += 2;
+
                 }else if(lista[i+2].categoria == 37){
                     //Acabou a declaração
+                    preencheTabela(lista[i+1].valor,categoria,funcao,lista[i+1].linha,lista[i+1].coluna);
                     return i+2;
                 }else{
                     //Erro - Caractere não esperado
@@ -168,47 +170,190 @@ int analisaDeclaracaoVariaveis (int i){
         }
 }
 
-int operacaoAritmetica(int i){
+int notacaoPilha(Token operadores[100], char *escopoAtual,int iterOperacao){
+    printf("\nOperações: ");
+    for(int i =0; i < iterOperacao ; i++){
+        printf("%s",operadores[i].valor);
+    }
+    int i = 0, indexPrincipal = 0, aux =0, tipo = 0, op1 = 0 ,op2 = 0;
+    char resultTemp[1000] = "";
+    while((operadores[i].categoria != 40 )&& aux == 0){
+        if((operadores[i].categoria == 28)||(operadores[i].categoria == 29)){
+            printf("\n%s%s%s",operadores[i-1].valor,operadores[i].valor,
+            operadores[i+1].valor);
+            if(operadores[i-1].categoria == 1)
+            op1 = verificaOperacao(operadores[i-1].valor,escopoAtual);
+            if(operadores[i+1].categoria == 1)
+            op2 = verificaOperacao(operadores[i+1].valor,escopoAtual);
+            if(op1 == 0)op1 = operadores[i-1].categoria;
+            if(op2 == 0)op2 = operadores[i+1].categoria; 
+            if(operadores[i].categoria == 29){
+                tipo = 7;
+            }else{
+                tipo = tbTiposSoma[((op1)-3)%3][((op2)-3)%3];
+            }
+            strcpy(resultTemp,preencheTabelaAssembly(operadores[i].valor,"regTemp",operadores[i-1].valor,operadores[i+1].valor));
+            indexPrincipal = i;
+            aux = 1;
+        }
+        i++;
+    }
+    while((operadores[i].categoria != 40 )){
+        if((operadores[i].categoria == 28)||(operadores[i].categoria == 29)){
+            printf("\n%s%s",operadores[i].valor,operadores[i+1].valor);
+            if(op1 == 0)op1 = operadores[i+1].categoria; 
+            if(operadores[i].categoria == 29){
+                tipo = 7;
+            
+            }else{
+                tipo = tbTiposSoma[tipo][((op2)-3)%3];
+         
+            }
+        strcpy(resultTemp,preencheTabelaAssembly(operadores[i].valor,"regTemp",resultTemp,operadores[i+1].valor));
+        }
+        i++;
+    }
+    if(aux == 0){
+        op1 = 0,op2 = 0;
+        i = 0;
+        while((operadores[i].categoria != 40)&& aux == 0){
+        if((operadores[i].categoria == 26)||(operadores[i].categoria == 27)){
+            printf("\n%s%s%s",operadores[i-1].valor,operadores[i].valor,
+            operadores[i+1].valor);  
+            if(operadores[i-1].categoria == 1)
+            op1 = verificaOperacao(operadores[i-1].valor,escopoAtual);
+            if(operadores[i+1].categoria == 1)
+            op2 = verificaOperacao(operadores[i+1].valor,escopoAtual);
+            if(op1 == 0)op1 = operadores[i-1].categoria;
+            if(op2 == 0)op2 = operadores[i+1].categoria;
+            printf("\n%d%s%d",((op1)-3)%3,operadores[i].valor,((op2)-3)%3);
+            tipo = tbTiposSoma[((op1)-3)%3][((op2)-3)%3];
+            strcpy(resultTemp,preencheTabelaAssembly(operadores[i].valor,"regTemp",operadores[i-1].valor,operadores[i+1].valor));
+            indexPrincipal = i;
+            aux = 1;
+        }
+        i++;
+        }
+        while((operadores[i].categoria != 40)){
+            if((operadores[i].categoria == 26)||(operadores[i].categoria == 27)){
+                printf("\n%s%s",operadores[i].valor,operadores[i+1].valor);
+                op1 = verificaOperacao(operadores[i+1].valor,escopoAtual);
+                if(op1 == 0)op1 = operadores[i-1].categoria;
+                tipo = tbTiposSoma[((tipo)-3)%3][((op1)-3)%3];
+            strcpy(resultTemp,preencheTabelaAssembly(operadores[i].valor,"regTemp",resultTemp,operadores[i+1].valor));
+            }
+
+            i++;
+        }
+    }else{
+        i=0;
+        while((operadores[i].categoria != 40)){
+            if((operadores[i].categoria == 26)||(operadores[i].categoria == 27)){
+                printf("\n%s%s",operadores[i].valor,operadores[i+1].valor);
+                op1 = verificaOperacao(operadores[i+1].valor,escopoAtual);
+                if(op1 == 0)op1 = operadores[i-1].categoria;
+                tipo = tbTiposSoma[((tipo)-3)%3][((op1)-3)%3];
+                strcpy(resultTemp,preencheTabelaAssembly(operadores[i].valor,"regTemp",resultTemp,operadores[i+1].valor));
+            }
+
+            i++;
+        }
+    }
+return tipo;
+}
+
+int operacaoAritmetica(int i,char *escopoAtual){
     //Verificando se tem um operador de atribuição "="
+    Token operacao[100];
+    int iMudou =0;
+    int iteraOperacao = 0;
     if(lista[i+1].categoria == 30){
-        //Verifica se após o operador de atribuição existe um id
-        if(lista[i+2].categoria == 1){
-            //Verificando se tem um operador de soma,subtração,multiplicação,divisão
-            if((lista[i+3].categoria == 26) || (lista[i+3].categoria == 27) || (lista[i+3].categoria == 28) || (lista[i+3].categoria == 29)){
-                //Verificando se após os operadores aritméticos existe um outro id
-                if((lista[i+4].categoria == 1)||(lista[i+4].categoria == 3)||(lista[i+4].categoria == 4)||(lista[i+4].categoria == 5)){
-                    if(lista[i+5].categoria == 37){
-                        return i += 5;
-                    }else{
-                        printf("\nErro - Ponto e vírgula não encontrado esperado em : linha: %d , coluna %d ", 
-                        lista[i+4].linha ,lista[i+4].coluna);
+        while(1){
+            //Verifica se após o operador de atribuição existe um id
+            if((lista[i+2].categoria == 1)||(lista[i+2].categoria == 3)||(lista[i+2].categoria == 4)||(lista[i+2].categoria == 5)){
+                verificaTabela(lista[i+2].valor,lista[i+2].categoria,escopoAtual,lista[i+2].linha,lista[i+2].coluna);
+                operacao[iteraOperacao].categoria = lista[i+2].categoria;
+                operacao[iteraOperacao].valor = lista[i+2].valor;
+                operacao[iteraOperacao].linha = lista[i+2].linha;
+                operacao[iteraOperacao].coluna = lista[i+2].coluna;
+                iteraOperacao++;
+                //Verificando se tem um operador de soma,subtração,multiplicação,divisão
+                if((lista[i+3].categoria == 26) || (lista[i+3].categoria == 27) || (lista[i+3].categoria == 28) || (lista[i+3].categoria == 29)){
+                    operacao[iteraOperacao].categoria = lista[i+3].categoria;
+                    operacao[iteraOperacao].valor = lista[i+3].valor;
+                    operacao[iteraOperacao].linha = lista[i+3].linha;
+                    operacao[iteraOperacao].coluna = lista[i+3].coluna;
+                    iteraOperacao++;
+                    //Verificando se após os operadores aritméticos existe um outro id
+                    if((lista[i+4].categoria == 1)||(lista[i+4].categoria == 3)||(lista[i+4].categoria == 4)||(lista[i+4].categoria == 5)){
+                        if(lista[i+4].categoria == 1)
+                        verificaTabela(lista[i+4].valor,lista[i+4].categoria,escopoAtual,lista[i+4].linha,lista[i+4].coluna);
+                        operacao[iteraOperacao].categoria = lista[i+4].categoria;
+                        operacao[iteraOperacao].valor = lista[i+4].valor;
+                        operacao[iteraOperacao].linha = lista[i+4].linha;
+                        operacao[iteraOperacao].coluna = lista[i+4].coluna;
+                        iteraOperacao++;
+        
+                        if(lista[i+5].categoria == 37){
+                            operacao[iteraOperacao].valor = "";
+                            operacao[iteraOperacao].linha = 0;
+                            operacao[iteraOperacao].coluna = 0;
+                            operacao[iteraOperacao].categoria = 40;
+                            int novoTipo = notacaoPilha(operacao,escopoAtual,iteraOperacao);
+                            mudaVariavelTabela(lista[i-iMudou].valor,novoTipo,escopoAtual,lista[i+4].linha ,lista[i+4].coluna);
+                            //printf("Atualmente o temporario é : %s",tabelaAssembly[indexAssembly-1].resultado);
+                            preencheTabelaAssembly("=",lista[i-iMudou].valor,tabelaAssembly[indexAssembly-1].resultado,"");
+                            return i += 5;
+                        }else if((lista[i+5].categoria == 26) || (lista[i+5].categoria == 27) || 
+                        (lista[i+5].categoria == 28) || (lista[i+5].categoria == 29)){
+                            operacao[iteraOperacao].categoria = lista[i+5].categoria;
+                            operacao[iteraOperacao].valor = lista[i+5].valor;
+                            operacao[iteraOperacao].linha = lista[i+5].linha;
+                            operacao[iteraOperacao].coluna = lista[i+5].coluna;
+                            iteraOperacao++;
+                            i += 4;
+                            iMudou +=4;
+                        
+                        }else{
+                            printf("\nErro - Ponto e vírgula não encontrado esperado em : linha: %d , coluna %d ", 
+                            lista[i+4].linha ,lista[i+4].coluna);
+                            quantidadeErros++;
+                            return consertaBostaGeral(i+4);
+                        }
+                    //Erro - Faltou um ID para completar a operação
+                    }else{ 
+                        printf("\nErro - ID não encontrado esperado em : linha: %d , coluna %d ", lista[i+4].linha ,lista[i+4].coluna);
                         quantidadeErros++;
                         return consertaBostaGeral(i+4);
                     }
-                //Erro - Faltou um ID para completar a operação
-                }else{ 
-                    printf("\nErro - ID não encontrado esperado em : linha: %d , coluna %d ", lista[i+4].linha ,lista[i+4].coluna);
-                    quantidadeErros++;
-                    return consertaBostaGeral(i+4);
+                //Operação de atribuição de valores entre 2 ids 
+                }else if(lista[i+3].categoria == 37){
+                    operacao[iteraOperacao].valor = "";
+                    operacao[iteraOperacao].linha = 0;
+                    operacao[iteraOperacao].coluna = 0;
+                    operacao[iteraOperacao].categoria = 40;
+                    int novoTipo = notacaoPilha(operacao,escopoAtual,iteraOperacao);
+                    mudaVariavelTabela(lista[i].valor,novoTipo,escopoAtual,lista[i+4].linha ,lista[i+4].coluna);
+                    preencheTabelaAssembly("=",lista[i].valor,tabelaAssembly[indexAssembly-1].resultado,"");
+                    //printf("Atualmente o temporario é : %s",tabelaAssembly[indexAssembly].resultado);
+                    return i+=3;
+                //Erro - Caracter não esperado depois do operador
+                }else{
+                    printf("\nErro - Caracter não esperado em : linha: %d , coluna %d ", lista[i+3].linha ,lista[i+3].coluna);  
+                    quantidadeErros++;  
+                    return consertaBostaGeral(i+3);
                 }
-            //Operação de atribuição de valores entre 2 ids 
-            }else if(lista[i+3].categoria == 37){
-                return i+=3;
-            //Erro - Caracter não esperado depois do operador
+            //Operação de atribuição de um valor constante para um id     
+            }else if((lista[i+2].categoria == 3)||(lista[i+2].categoria == 4)||(lista[i+2].categoria == 5)){
+                return i+3;     
+            //Caso não exista id dps da atribuição
             }else{
-                printf("\nErro - Caracter não esperado em : linha: %d , coluna %d ", lista[i+3].linha ,lista[i+3].coluna);  
-                quantidadeErros++;  
-                return consertaBostaGeral(i+3);
+                printf("\nErro - ID não encontrado esperado em : linha: %d , coluna %d ", lista[i+2].linha ,lista[i+2].coluna);   
+                quantidadeErros++; 
+                return consertaBostaGeral(i+2);
             }
-        //Operação de atribuição de um valor constante para um id     
-        }else if((lista[i+2].categoria == 3)||(lista[i+2].categoria == 4)||(lista[i+2].categoria == 5)){
-            return i+3;     
-        //Caso não exista id dps da atribuição
-        }else{
-            printf("\nErro - ID não encontrado esperado em : linha: %d , coluna %d ", lista[i+2].linha ,lista[i+2].coluna);   
-            quantidadeErros++; 
-            return consertaBostaGeral(i+2);
         }
+    
     }else if((lista[i+1].categoria == 26)&&(lista[i+2].categoria == 26)){
         return i + 3;
     }else{
@@ -272,15 +417,15 @@ int analisaElse(int i){
     }
 }
 
-int analisaFor(int i){
+int analisaFor(int i,char *escopoAtual){
     //Verifica o parenteses aberto
     if(lista[i+1].categoria==31){
         //Verifica se a declaração esta sendo feita por um tipo aceito 
         if((lista[i+2].categoria == 6) || (lista[i+2].categoria == 7) || (lista[i+2].categoria == 8)){
-            i = analisaDeclaracaoVariaveis(i+2);
+            i = analisaDeclaracaoVariaveis(i+2,"2");
             i = operacaoLogica(i);
             if(lista[i+2].categoria==1){
-                i = operacaoAritmetica(i+2);
+                i = operacaoAritmetica(i+2,escopoAtual);
                 if(lista[i+1].categoria==36){
                     i = analisaEscopo(i+1);
                 }
@@ -305,16 +450,17 @@ int analisaWhile(int i){
     return i;  
 }
 
-int analisaEscopo(int i){
+int analisaEscopo(int i,char *escopoAtual){
     //Enquanto não chegar no final da função (indicado por } ) ele continua a andar nos tokens
+    
     while (lista[i+1].categoria != 35){
         //If para a declaração de variáveis tipos : int, float, char e void.
         if((lista[i+1].categoria==6)||(lista[i+1].categoria==7)||(lista[i+1].categoria==8)||(lista[i+1].categoria==25)){
-            i = analisaDeclaracaoVariaveis(i+1);
+            i = analisaDeclaracaoVariaveis(i+1,escopoAtual);
         }
         //If que indica que estão sendo feitas operações aritméticas dentro do escopo.
         else if(lista[i+1].categoria==1){
-            i = operacaoAritmetica(i+1);
+            i = operacaoAritmetica(i+1,escopoAtual);
         }
         //If que chama uma função para analisar se tudo esta certo com o if do codigo
         else if(lista[i+1].categoria==9){
@@ -323,7 +469,7 @@ int analisaEscopo(int i){
         } 
         //If que chama uma função para analisar se tudo esta certo com o for do codigo
         else if(lista[i+1].categoria==11){
-            i = analisaFor(i+1);
+            i = analisaFor(i+1,escopoAtual);
         }
         else if(lista[i+1].categoria==12){
             i = analisaWhile(i+1);
@@ -337,17 +483,17 @@ int analisaEscopo(int i){
     return i+1;
 }
 
-
 int analisaFuncao(int i ){
     //Caso seja uma declaração entra aqui categoria ==1 é o nome da função
     if((lista[i+1].categoria == 1)||(lista[i+1].categoria==17)){
         //Verifica se tem um parenteses para declaração dos parametros
+        char * escopoAtual = lista[i+1].valor;
         if(lista[i+2].categoria == 31){
             //Verifica a declaração dos parametros 
-            i = analisaParametros(i+2);
+            i = analisaParametros(i+2,escopoAtual);
                 //Analisa o escopo da função 
                 if(lista[i+1].categoria == 36){
-                    return analisaEscopo(i+1);
+                    return analisaEscopo(i+1,escopoAtual);
                 //Indica uma função vazia, só declaração formal    
                 }else if(lista[i+1].categoria == 37){
                     return i+1;
