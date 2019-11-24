@@ -231,7 +231,7 @@ char * preencheTabelaAssembly(char *operador,char *resultado,char *op1,char *op2
         char *op2Aux = malloc (sizeof (char) * 100);
 
         if(strcmp("+", operador)==0|| strcmp("-", operador)==0|| strcmp("*", operador)==0|| strcmp("/", operador)==0){
-            if(strcmp("+", operador)==0)strcpy(operadorAux,"SUM");
+            if(strcmp("+", operador)==0)strcpy(operadorAux,"ADD");
             else if(strcmp("-", operador)==0)strcpy(operadorAux,"SUB");
             else if(strcmp("*", operador)==0)strcpy(operadorAux,"MUL");
             else if(strcmp("/", operador)==0)strcpy(operadorAux,"DIV");

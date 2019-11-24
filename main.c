@@ -14,5 +14,6 @@ int main(int argc, char *argv[]){
     printaTabela();
     printf("\n-----------\n");
     printaTabelaAssembly();
+    printf("\n-----------\n");
     return 0;
 }
