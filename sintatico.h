@@ -9,7 +9,7 @@ typedef enum {FALSE, TRUE} bool;
 int analisaLista();
 int analisaCodigo();
 
-int analisaIf(int i);
+int analisaIf(int i,char * escopoAtual,int contador);
 void criaListaTokens();
 
 #endif
