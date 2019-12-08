@@ -31,7 +31,7 @@ Compilador básico que contém :
 Ao lidar com erros, procurou-se sempre ir para a próxima posição "segura" disponível, como por exemplo no ***Erro de sintaxe 1***  o próximo token válido seria ***")"*** que fecha a interação com o if. Ou então no ***Erro de sintaxe 2***  que o próximo token "seguro" seria o ponto e vírgula, assim podendo continuar o código sem mais problemas.
 
 ## Analisador Semântico e Geração de código: 
-Entrega e apresentação do trabalho dia: dd/mm/yyyy
+Entrega e apresentação do trabalho dia: 10/12/2019
 
 ## Funcionalidades Semânticas e geração de código:
 Ao declarar uma variável ela é mandada para uma tabela representada pela struct ***tabelaVariaveis***.
